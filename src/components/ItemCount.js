@@ -18,6 +18,11 @@ const ItemCount = (props) => {
         }
     }
 
+    const confirmar =() => {
+        props.onAdd(contador)
+        console.log(contador)
+    }
+
   return (
     <div>
         <label>Stock: {props.stock}</label>
@@ -26,7 +31,7 @@ const ItemCount = (props) => {
         <p>{contador}</p>
         <button onClick={agregarItem}>+</button>
         <br/>
-        <button>Agregar al carrito</button>
+        <button onClick={confirmar}>Agregar al carrito</button>
     </div>
   )
 }
