@@ -1,48 +1,66 @@
-import {createContext, useState} from "react"
+import { createContext, useState, useEffect } from "react"
 
 export const contexto = createContext()
 
-const {/* Consumer, */ Provider} = contexto
+const {/* Consumer, */ Provider } = contexto
 
-const CartContext = ({children}) => {
+const CartContext = ({ children }) => {
 
     const [carrito, setCarrito] = useState([])
     const [cantidad_total, setCantidad_total] = useState(0)
-    const [precio_total, setPrecio_totall] = useState(0)
+    const [precio_total, setPrecio_total] = useState(0)
 
     const addItem = (producto, cantidad) => {
-        if(isInCart(producto)){
+        if (isInCart(producto)) {
             const newCart = [...carrito]
             for (const elemento of newCart) {
-                if (elemento.id === producto.id){
-                    elemento.cantidad = elemento.cantidad + cantidad
+                if (elemento.id === producto.id) {
+                    // elemento.cantidad = elemento.cantidad + cantidad
+                    elemento.cantidad = cantidad
                 }
             }
             // setCarrito(newCart) 
             console.log(newCart)
             console.log("existe")
 
-        }else{
+        } else {
             producto.cantidad = cantidad
-            setCarrito([...carrito,producto])
+            setCarrito([...carrito, producto])
             console.log("NO existe")
 
         }
 
-        setCantidad_total(cantidad_total + cantidad)
+        console.log(carrito)
+        // setCantidad_total(cantidad_total + cantidad)
+        // setPrecio_total(precio_total + (producto.precio * cantidad))
+        calcularCantidad(carrito)
+        calcularPrecioTotal(carrito)
     }
 
+    useEffect(() => {
+        calcularCantidad(carrito)
+        calcularPrecioTotal(carrito)
+    }, [carrito])
+
     const removeItem = (id) => {
-        const newCart = [...carrito].map(elemento => elemento.id !== id)
+        const newCart = [...carrito].filter(elemento => elemento.id !== id)
         setCarrito(newCart)
     }
 
-    const clear = () =>{
+    const clear = () => {
         setCarrito([])
     }
 
     const isInCart = (producto) => {
         return carrito.some(e => e.id == producto.id)
+    }
+
+    const calcularCantidad = (carr) => {
+        setCantidad_total(carr.reduce((acumulador, producto) => acumulador + producto.cantidad, 0))
+    }
+
+    const calcularPrecioTotal = (carr) => {
+        setPrecio_total(carr.reduce((acumulador, producto) => acumulador + (producto.precio * producto.cantidad), 0))
     }
 
     const valorDelContexto = {
@@ -56,7 +74,7 @@ const CartContext = ({children}) => {
     }
 
     return (
-        <Provider value = {valorDelContexto} >
+        <Provider value={valorDelContexto} >
             {children}
         </Provider>
     )
